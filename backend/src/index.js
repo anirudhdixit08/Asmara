@@ -1,0 +1,41 @@
+import express from "express";
+import dotenv from "dotenv";
+import path from "path";
+import DBConnection from "./config/db.js";
+import cookieparser from "cookie-parser";
+import { fileURLToPath } from "url";
+
+const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+
+app.use(express.json());
+app.use(cookieparser());
+
+async function InitializeConnection() {
+  console.log("Starting Connection!");
+
+  try {
+    // await Promise.all([DBConnection(), RedisConnection(), connectCloudinary()]);
+    await Promise.all([DBConnection()]);
+
+    console.log("Connection to Mongo, Cloudinary and Redis Established!");
+
+    app.listen(process.env.PORT, () => {
+      console.log(`Server listening on Port ${process.env.PORT}`);
+    });
+  } catch (error) {
+    console.error("CRITICAL: Initialization failed. Server did not start.");
+    console.error(error);
+    process.exit(1);
+  }
+}
+
+InitializeConnection();
+
+app.get("/", (req, res) => {
+  res.send("Hello from Anirudh");
+});
