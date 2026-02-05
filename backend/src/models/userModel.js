@@ -30,10 +30,15 @@ const userSchema = new Schema(
         message: "Please enter a valid email address",
       },
     },
+    phoneNumber: {
+      type: String,
+      validate: [validator.isMobilePhone, "Invalid phone number"],
+    },
     role: {
       type: String,
       enum: ["asmara", "factory"],
       default: "factory",
+      required: true,
     },
     password: {
       type: String,
@@ -52,13 +57,11 @@ const userSchema = new Schema(
           "Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol.",
       },
     },
-    profileId: {
-      type: Schema.Types.ObjectId,
-      refPath: "roleModel",
-    },
-    roleModel: {
+    organisationName: {
       type: String,
-      enum: ["AsmaraProfile", "FactoryProfile"],
+      required: true,
+      required: true,
+      trim: true,
     },
     isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },

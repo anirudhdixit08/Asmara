@@ -2,8 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import DBConnection from "./config/db.js";
+import RedisConnection, { redisClient } from "./config/redis.js";
 import cookieparser from "cookie-parser";
 import { fileURLToPath } from "url";
+
+import authRouter from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -14,13 +17,14 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 app.use(express.json());
 app.use(cookieparser());
+app.use("/auth", authRouter);
 
 async function InitializeConnection() {
   console.log("Starting Connection!");
 
   try {
     // await Promise.all([DBConnection(), RedisConnection(), connectCloudinary()]);
-    await Promise.all([DBConnection()]);
+    await Promise.all([DBConnection(), , RedisConnection()]);
 
     console.log("Connection to Mongo, Cloudinary and Redis Established!");
 

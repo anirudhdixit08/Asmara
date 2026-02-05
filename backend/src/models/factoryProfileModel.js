@@ -7,13 +7,7 @@ const factoryProfileSchema = new Schema(
       city: String,
       country: { type: String, default: "India" },
     },
-    capabilities: [String],
-    dailyCapacity: Number,
-    isVerified: { type: Boolean, default: false },
-    phoneNumber: {
-      type:[String],
-      validate: [validator.isMobilePhone, "Invalid phone number"],
-    },
+    isVerified: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
