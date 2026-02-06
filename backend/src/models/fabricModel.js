@@ -39,10 +39,6 @@ const fabricSchema = new Schema(
       type: Date,
     },
     // For storing the technical sketch or swatch image shown in the design
-    fabricSketch: {
-      url: { type: String },
-      cloudinaryPublicId: { type: String },
-    },
     lastUpdatedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

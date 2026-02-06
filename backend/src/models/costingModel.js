@@ -66,16 +66,15 @@ const costingSchema = new Schema(
  * Automatically calculates the Final Cost based on the individual
  * components whenever the document is saved.
  */
-costingSchema.pre("save", function (next) {
+costingSchema.pre("save", function () {
   this.finalCost =
-    this.fabricCost +
-    this.trim +
-    this.packagingWithYY +
-    this.washingCost +
-    this.testing +
-    this.cutMakingCost +
-    this.overheads;
-  next();
+    (this.fabricCost || 0) +
+    (this.trim || 0) +
+    (this.packagingWithYY || 0) +
+    (this.washingCost || 0) +
+    (this.testing || 0) +
+    (this.cutMakingCost || 0) +
+    (this.overheads || 0);
 });
 
 const Costing = mongoose.model("Costing", costingSchema);

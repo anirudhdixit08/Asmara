@@ -8,10 +8,6 @@ const tnaSchema = new Schema(
       ref: "Order",
       required: true,
     },
-    previewPhoto: {
-      url: { type: String },
-      cloudinaryPublicId: { type: String },
-    },
     greigeCommit: { type: Date },
     colorCommit: { type: Date },
     ppApproval: { type: Date },

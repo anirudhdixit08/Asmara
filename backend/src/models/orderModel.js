@@ -93,6 +93,14 @@ const orderSchema = new Schema(
       type: Date,
       required: [true, "Shipment Date is required"],
     },
+    previewPhoto: {
+      url: { type: String },
+      cloudinaryPublicId: { type: String },
+    },
+    fabricSketch: {
+      url: { type: String },
+      cloudinaryPublicId: { type: String },
+    },
     season: {
       type: String,
       required: [true, "Season is required"],

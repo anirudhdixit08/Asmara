@@ -27,10 +27,6 @@ const techpackIterationSchema = new Schema(
     },
     // The field for fabricSketch as requested (Image 21)
     // Stores the technical drawing/diagram shown on the right of your UI
-    fabricSketch: {
-      url: { type: String },
-      cloudinaryPublicId: { type: String },
-    },
     // Reference to the actual Techpack file (PDF/ZIP)
     // This allows you to upload a new version during iterations
     techpackFile: {

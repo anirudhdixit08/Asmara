@@ -42,7 +42,6 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    // Increased to 10 MB to accommodate detailed Techpack ZIPs
     fileSize: 1024 * 1024 * 10,
   },
 });

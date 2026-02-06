@@ -11,12 +11,14 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     // Upload the file to Cloudinary
     const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
+      resource_type: "raw",
       folder: "gp_asmara_portal", // Organizes files in your Cloudinary dashboard
+      use_filename: true, // Helps browser recognize the file type
+      unique_filename: true,
     });
 
     // File has been uploaded successfully
-    console.log("File uploaded to Cloudinary:", response.url);
+    // console.log("File uploaded to Cloudinary:", response.url);
 
     // Safely remove the local file
     if (fs.existsSync(localFilePath)) {
