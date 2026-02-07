@@ -6,6 +6,7 @@ import {
   updateFabric,
   updateTechpack,
   updateCosting,
+  updateOrderStatus,
   getAllOrders,
   searchOrderByStyle,
 } from "../controller/orderController.js";
@@ -16,41 +17,43 @@ const orderRouter = express.Router();
 
 orderRouter.post(
   "/create",
-  isAuthenticated,
+  isAuthorised,
   upload.fields([
     { name: "techpack", maxCount: 1 }, // The PDF/ZIP Techpack
     { name: "previewPhoto", maxCount: 1 }, // The Style Image
   ]),
-  createOrder
+  createOrder,
 );
 
 orderRouter.get("/details/:orderId", isAuthenticated, getOrderDetails);
 
+orderRouter.patch("/update-status/:orderId", isAuthenticated, updateOrderStatus);
+
 orderRouter.patch(
   "/update-tna/:tnaId",
-  isAuthenticated,
+  isAuthorised,
   upload.single("fabricSketch"),
-  updateTna
+  updateTna,
 );
 
 orderRouter.get("/search", isAuthenticated, searchOrderByStyle);
 
 orderRouter.patch(
   "/update-fabric/:fabricId",
-  isAuthenticated,
+  isAuthorised,
   // isAuthorised("asmara"),
   upload.single("fabricSketch"), // Matches the field in your Fabric model
-  updateFabric
+  updateFabric,
 );
 
 orderRouter.patch(
   "/update-techpack/:techpackId",
-  isAuthenticated,
+  isAuthorised,
   upload.fields([
     { name: "techpackFile", maxCount: 1 }, // The actual PDF/ZIP
     { name: "fabricSketch", maxCount: 1 }, // The drawing for the dashboard
   ]),
-  updateTechpack
+  updateTechpack,
 );
 
 orderRouter.patch(
@@ -60,7 +63,7 @@ orderRouter.patch(
     { name: "costingSheet", maxCount: 1 }, // PDF/ZIP
     { name: "fabricSketch", maxCount: 1 }, // Technical Sketch
   ]),
-  updateCosting
+  updateCosting,
 );
 
 orderRouter.get("/all", isAuthenticated, getAllOrders);

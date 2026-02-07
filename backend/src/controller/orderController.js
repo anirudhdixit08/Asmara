@@ -1,4 +1,5 @@
 import Order from "../models/orderModel.js";
+import User from "../models/userModel.js";
 import TNA from "../models/tnaModel.js";
 import Fabric from "../models/fabricModel.js";
 import TechpackIteration from "../models/techpackModel.js";
@@ -13,7 +14,7 @@ export const createOrder = async (req, res) => {
       orderQuantity,
       shipmentDate,
       season,
-      factoryId,
+      factoryOrganisationName,
     } = req.body;
 
     // 1. Validation for mandatory text fields
@@ -22,13 +23,28 @@ export const createOrder = async (req, res) => {
       !buyerName ||
       !orderQuantity ||
       !shipmentDate ||
-      !factoryId
+      !factoryOrganisationName
     ) {
       return res.status(400).json({
         success: false,
         message: "Please fill all required fields to start the workflow.",
       });
     }
+
+    // 1b. Resolve factory by organisation name (role: factory), case-insensitive
+    const name = factoryOrganisationName.trim();
+    const factoryUser = await User.findOne({
+      role: "factory",
+      organisationName: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i"),
+      isActive: true,
+    });
+    if (!factoryUser) {
+      return res.status(400).json({
+        success: false,
+        message: "No active factory found with this organisation name.",
+      });
+    }
+    const factoryId = factoryUser._id;
 
     // 2. Handle Multi-File Upload check
     if (!req.files || !req.files.techpack) {
@@ -122,20 +138,26 @@ export const getOrderDetails = async (req, res) => {
         .json({ success: false, message: "Order ID is required." });
     }
 
-    // Populate all referenced documents to get the full production state
     const order = await Order.findById(orderId)
-      .populate("tna") // Pulls TNA milestones
-      .populate("fabric") // Pulls Fabric/Lab dip details
-      .populate("techpackDetails") // Pulls Fit submissions and PDF link
-      .populate("costing") // Pulls the breakdown and approval status
-      .populate("previewPhoto")
-      .populate("merchant", "name email") // Merchant contact info
-      .populate("factory", "name email"); // Factory contact info
+      .populate("tna")
+      .populate("fabric")
+      .populate("techpackDetails")
+      .populate("costing")
+      .populate("merchant", "firstName lastName emailId organisationName")
+      .populate("factory", "firstName lastName emailId organisationName");
 
     if (!order) {
       return res
         .status(404)
         .json({ success: false, message: "Order not found." });
+    }
+
+    const user = req.result;
+    if (user.role === "factory" && order.factory?._id?.toString() !== user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this order.",
+      });
     }
 
     res.status(200).json({
@@ -150,6 +172,9 @@ export const getOrderDetails = async (req, res) => {
 
 export const updateTna = async (req, res) => {
   try {
+    if (req.result.role !== "asmara") {
+      return res.status(403).json({ success: false, message: "Only Asmara can edit TNA." });
+    }
     const { tnaId } = req.params;
     let tnaUpdateData = { ...req.body };
 
@@ -198,6 +223,9 @@ export const updateTna = async (req, res) => {
 
 export const updateFabric = async (req, res) => {
   try {
+    if (req.result.role !== "asmara") {
+      return res.status(403).json({ success: false, message: "Only Asmara can edit Fabric." });
+    }
     const { fabricId } = req.params;
     let fabricUpdateData = { ...req.body };
 
@@ -246,6 +274,9 @@ export const updateFabric = async (req, res) => {
 
 export const updateTechpack = async (req, res) => {
   try {
+    if (req.result.role !== "asmara") {
+      return res.status(403).json({ success: false, message: "Only Asmara can edit Tech Pack." });
+    }
     const { techpackId } = req.params;
     let techpackUpdateData = { ...req.body };
 
@@ -348,9 +379,16 @@ export const updateCosting = async (req, res) => {
       }
     }
 
-    // 3. Update Text/Financial Fields
-    // Only update fields provided in the request body
-    Object.assign(costing, req.body);
+    // 3. Update Text/Financial Fields (parse FormData string values)
+    const numFields = ["fabricCost", "trim", "packagingWithYY", "washingCost", "testing", "cutMakingCost", "overheads"];
+    numFields.forEach((key) => {
+      if (req.body[key] !== undefined && req.body[key] !== "") {
+        costing[key] = Number(req.body[key]) || 0;
+      }
+    });
+    if (req.body.isApproved !== undefined) {
+      costing.isApproved = req.body.isApproved === "true" || req.body.isApproved === true;
+    }
     costing.lastUpdatedBy = req.result._id;
 
     // 4. Save to trigger the pre-save finalCost calculation
@@ -367,11 +405,64 @@ export const updateCosting = async (req, res) => {
   }
 };
 
+const ORDER_STATUS_VALUES = ["pending", "in-production", "shipped", "delivered", "cancelled"];
+const FACTORY_ALLOWED_STATUSES = ["shipped", "delivered"];
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const user = req.result;
+
+    if (!status || typeof status !== "string") {
+      return res.status(400).json({ success: false, message: "Status is required." });
+    }
+    if (!ORDER_STATUS_VALUES.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status value." });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    if (user.role === "factory") {
+      if (order.factory?.toString() !== user._id.toString()) {
+        return res.status(403).json({ success: false, message: "You do not have access to this order." });
+      }
+      if (!FACTORY_ALLOWED_STATUSES.includes(status)) {
+        return res.status(403).json({
+          success: false,
+          message: "Factory can only set status to Shipped or Delivered.",
+        });
+      }
+    }
+
+    order.status = status;
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated.",
+      data: order,
+    });
+  } catch (error) {
+    console.error("Update Order Status Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error." });
+  }
+};
+
 export const getAllOrders = async (req, res) => {
   try {
-    // 1. Build a dynamic query for search (optional but recommended)
     const { search } = req.query;
+    const user = req.result;
+
     let query = { isActive: true };
+
+    // Factory sees only orders assigned to them; Asmara sees all
+    if (user.role === "factory") {
+      query.factory = user._id;
+    }
 
     if (search) {
       query.$or = [
@@ -380,14 +471,13 @@ export const getAllOrders = async (req, res) => {
       ];
     }
 
-    // 2. Fetch all orders and populate basic info for the cards
     const orders = await Order.find(query)
       .select(
-        "styleNumber buyerName orderQuantity shipmentDate season status previewPhoto"
+        "styleNumber buyerName orderQuantity shipmentDate season status previewPhoto createdAt"
       )
-      .populate("merchant", "name email")
-      .populate("factory", "name email")
-      .sort({ createdAt: -1 }); // Show newest orders first
+      .populate("merchant", "firstName lastName emailId organisationName")
+      .populate("factory", "firstName lastName emailId organisationName")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,

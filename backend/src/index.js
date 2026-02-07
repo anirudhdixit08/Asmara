@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 
 import authRouter from "./routes/authRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import cors from "cors";
 
 const app = express();
 
@@ -16,6 +17,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieparser());
