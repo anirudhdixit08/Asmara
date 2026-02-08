@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 
 import authRouter from "./routes/authRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import notificationRouter from "./routes/notificationRoutes.js";
 import cors from "cors";
 
 const app = express();
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use(cookieparser());
 app.use("/auth", authRouter);
 app.use("/order", orderRouter);
+app.use("/notification", notificationRouter);
 
 async function InitializeConnection() {
   console.log("Starting Connection!");

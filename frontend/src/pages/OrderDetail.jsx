@@ -40,6 +40,10 @@ export default function OrderDetail() {
   const [editingStatus, setEditingStatus] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [editError, setEditError] = useState("");
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [commentSubmitLoading, setCommentSubmitLoading] = useState(false);
   const prevOrderIdRef = useRef(null);
 
   const isAsmara = user?.role === "asmara";
@@ -67,6 +71,16 @@ export default function OrderDetail() {
   useEffect(() => {
     if (error?.status === 401) navigate("/login", { replace: true });
   }, [error, navigate]);
+
+  useEffect(() => {
+    if (!orderId) return;
+    setCommentsLoading(true);
+    axiosClient
+      .get(`/notification/order/${orderId}/comments`)
+      .then((res) => setComments(res.data?.data ?? []))
+      .catch(() => setComments([]))
+      .finally(() => setCommentsLoading(false));
+  }, [orderId]);
 
   async function handleSaveTna(e) {
     e.preventDefault();
@@ -189,6 +203,23 @@ export default function OrderDetail() {
       setEditError(err.response?.data?.message || err.message || "Failed to save");
     } finally {
       setSaveLoading(false);
+    }
+  }
+
+  async function handleAddComment(e) {
+    e.preventDefault();
+    if (!orderId || !commentText.trim()) return;
+    setCommentSubmitLoading(true);
+    setEditError("");
+    try {
+      await axiosClient.post("/notification/comment", { orderId, text: commentText.trim() });
+      setCommentText("");
+      const res = await axiosClient.get(`/notification/order/${orderId}/comments`);
+      setComments(res.data?.data ?? []);
+    } catch (err) {
+      setEditError(err.response?.data?.message || err.message || "Failed to post comment");
+    } finally {
+      setCommentSubmitLoading(false);
     }
   }
 
@@ -597,6 +628,48 @@ export default function OrderDetail() {
                       ))
                     )}
                   </div>
+                </div>
+
+                <div className="pt-6 border-t border-base-300">
+                  <span className="text-xs font-bold text-base-content/70 uppercase tracking-wider block mb-3">Comment history</span>
+                  {commentsLoading ? (
+                    <div className="flex justify-center py-4"><span className="loading loading-spinner loading-sm" /></div>
+                  ) : (
+                    <>
+                      <ul className="space-y-3 mb-4 max-h-60 overflow-y-auto">
+                        {comments.length === 0 ? (
+                          <li className="text-sm text-base-content/60">No comments yet.</li>
+                        ) : (
+                          comments.map((c) => (
+                            <li key={c._id} className="bg-base-200 rounded-lg p-3 text-sm">
+                              <p className="font-medium text-base-content/90">
+                                {c.sender?.firstName && c.sender?.lastName
+                                  ? `${c.sender.firstName} ${c.sender.lastName}`
+                                  : c.sender?.organisationName || c.sender?.emailId || "Someone"}
+                                {c.sender?.role && (
+                                  <span className="ml-2 badge badge-ghost badge-sm">{c.sender.role}</span>
+                                )}
+                              </p>
+                              <p className="mt-1 text-base-content">{c.text}</p>
+                              <p className="text-xs text-base-content/60 mt-1">{formatDate(c.createdAt)}</p>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                      <form onSubmit={handleAddComment} className="flex gap-2 flex-wrap">
+                        <textarea
+                          className="textarea textarea-bordered textarea-sm flex-1 min-w-[200px] min-h-[80px]"
+                          placeholder="Add a comment…"
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          disabled={commentSubmitLoading}
+                        />
+                        <button type="submit" className="btn btn-primary btn-sm self-end" disabled={commentSubmitLoading || !commentText.trim()}>
+                          {commentSubmitLoading ? "Sending…" : "Post comment"}
+                        </button>
+                      </form>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

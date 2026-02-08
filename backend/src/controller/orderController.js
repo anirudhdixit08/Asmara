@@ -4,6 +4,7 @@ import TNA from "../models/tnaModel.js";
 import Fabric from "../models/fabricModel.js";
 import TechpackIteration from "../models/techpackModel.js";
 import Costing from "../models/costingModel.js";
+import Notification, { NOTIFICATION_TYPES } from "../models/notificationModel.js";
 import uploadOnCloudinary from "../utils/cloudinaryUploader.js";
 
 export const createOrder = async (req, res) => {
@@ -393,6 +394,33 @@ export const updateCosting = async (req, res) => {
 
     // 4. Save to trigger the pre-save finalCost calculation
     await costing.save();
+
+    // 5. When Asmara approves costing, notify the assigned Factory; when Factory approves, notify Merchant
+    if (costing.isApproved === true) {
+      const order = await Order.findById(costing.orderId).select("factory merchant styleNumber").lean();
+      if (order) {
+        if (req.result.role === "asmara" && order.factory) {
+          await Notification.create({
+            recipient: order.factory,
+            sender: req.result._id,
+            orderId: costing.orderId,
+            type: NOTIFICATION_TYPES[0],
+            message: `Costing approved for order ${order.styleNumber || costing.orderId}.`,
+            isRead: false,
+          });
+        }
+        if (req.result.role === "factory" && order.merchant) {
+          await Notification.create({
+            recipient: order.merchant,
+            sender: req.result._id,
+            orderId: costing.orderId,
+            type: NOTIFICATION_TYPES[0],
+            message: `Factory approved costing for order ${order.styleNumber || costing.orderId}.`,
+            isRead: false,
+          });
+        }
+      }
+    }
 
     res.status(200).json({
       success: true,

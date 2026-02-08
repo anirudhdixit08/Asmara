@@ -255,7 +255,7 @@ export const logout = async (req, res) => {
         });
       }
     } catch (jwtErr) {
-      console.log("Token already invalid, just clearing cookie.");
+      //   console.log("Token already invalid, just clearing cookie.");
     }
     res.clearCookie("token", {
       httpOnly: true,
