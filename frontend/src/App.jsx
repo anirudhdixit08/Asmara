@@ -9,6 +9,8 @@ import SignUp from "./pages/SignUp.jsx";
 import CreateOrder from "./pages/CreateOrder.jsx";
 import OrdersList from "./pages/OrdersList.jsx";
 import OrderDetail from "./pages/OrderDetail.jsx";
+import Contact from "./pages/Contact.jsx";
+import About from "./pages/About.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,6 +29,8 @@ function App() {
       />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/orders" element={<OrdersList />} />
       <Route path="/orders/create" element={<CreateOrder />} />
       <Route path="/orders/:orderId" element={<OrderDetail />} />

@@ -6,14 +6,15 @@ export default function LandingPage() {
       {/* Top bar - dark blue */}
       <header className="bg-[#0f172a] text-white px-6 py-4 shadow-lg">
         <nav className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link to="/" className="text-xl font-semibold tracking-tight">
-            GP Asmara
+          <Link to="/" className="flex items-center gap-2.5 text-xl font-semibold tracking-tight">
+            <img src="/factrixlogo.svg" alt="" className="h-11 w-auto object-contain flex-shrink-0" />
+            <span>Factrix</span>
           </Link>
           <div className="flex items-center gap-6">
             <ul className="flex gap-8 text-sm font-medium text-white/90">
               <li><a href="#home" className="hover:text-white transition-colors">Home</a></li>
-              <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
             </ul>
             <Link
               to="/login"
@@ -38,24 +39,24 @@ export default function LandingPage() {
       >
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Welcome to GP Asmara
+            Welcome to Factrix
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto mb-10">
             Your trusted partner for quality care and service. We're here to help you every step of the way.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a
-              href="#about"
-              className="px-6 py-3 bg-white text-[#0f172a] font-semibold rounded-lg hover:bg-white/90 transition-colors"
+            <Link
+              to="/about"
+              className="px-6 py-3 bg-white text-[#0f172a] font-semibold rounded-lg hover:bg-white/90 transition-colors inline-block"
             >
               Learn more
-            </a>
-            <a
-              href="#contact"
-              className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
+            </Link>
+            <Link
+              to="/contact"
+              className="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors inline-block"
             >
               Get in touch
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -76,10 +77,18 @@ export default function LandingPage() {
 
       {/* Footer - dark blue */}
       <footer className="bg-[#0f172a] text-white py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-semibold">GP Asmara</span>
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <Link to="/" className="flex items-center gap-2 font-semibold hover:opacity-90">
+            <img src="/factrixlogo.svg" alt="" className="h-9 w-auto object-contain flex-shrink-0" />
+            <span>Factrix</span>
+          </Link>
+          <nav className="flex items-center gap-6 text-sm">
+            <Link to="/" className="text-white/80 hover:text-white transition-colors">Home</Link>
+            <Link to="/about" className="text-white/80 hover:text-white transition-colors">About</Link>
+            <Link to="/contact" className="text-white/80 hover:text-white transition-colors">Contact</Link>
+          </nav>
           <p className="text-sm text-white/70">
-            © {new Date().getFullYear()} GP Asmara. All rights reserved.
+            © {new Date().getFullYear()} Factrix. All rights reserved.
           </p>
         </div>
       </footer>

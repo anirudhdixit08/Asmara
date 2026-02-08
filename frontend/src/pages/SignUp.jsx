@@ -81,8 +81,9 @@ export default function SignUp() {
     <div className="min-h-screen bg-[#0f172a] flex flex-col">
       <header className="bg-[#0f172a] text-white px-6 py-4 border-b border-white/10">
         <nav className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link to="/" className="text-xl font-semibold tracking-tight">
-            GP Asmara
+          <Link to="/" className="flex items-center gap-2 text-xl font-semibold tracking-tight">
+            <img src="/factrixlogo.svg" alt="" className="h-11 w-auto object-contain flex-shrink-0" />
+            <span>Factrix</span>
           </Link>
           <Link to="/login" className="btn btn-ghost text-white hover:bg-white/10">
             Login

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Dark blue & white theme (GP Asmara) - overrides default DaisyUI primary */
-[data-theme="gpasmara"] {
+/* Dark blue & white theme (Factrix) - overrides default DaisyUI primary */
+[data-theme="factrix"] {
   --color-primary: oklch(0.22 0.05 264);
   --color-primary-content: oklch(0.99 0 0);
   --color-base-100: oklch(0.99 0 0);
