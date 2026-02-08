@@ -3,7 +3,7 @@ import fs from "fs";
 
 /**
  * Uploads a local file to Cloudinary and deletes the local copy.
- * Optimized for GP-Asmara Techpacks (PDF/ZIP) and Fabric Sketches.
+ * Optimized for Factrix Techpacks (PDF/ZIP) and Fabric Sketches.
  */
 const uploadOnCloudinary = async (localFilePath) => {
   try {

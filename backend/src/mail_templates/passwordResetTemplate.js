@@ -68,10 +68,10 @@ export const passwordResetTemplate = (otp) => {
     
     <body>
         <div class="container">
-            <div class="message">Reset Your Password - GP-Asmara</div>
+            <div class="message">Reset Your Password - Factrix</div>
             <div class="body">
                 <p>Hey there,</p>
-                <p>We received a request to reset the password for your GP-Asmara account. No worries, it happens to the best of us!</p>
+                <p>We received a request to reset the password for your Factrix account. No worries, it happens to the best of us!</p>
                 <p>Please use the OTP below to reset your password:</p>
                 
                 <h2 class="highlight">${otp}</h2>

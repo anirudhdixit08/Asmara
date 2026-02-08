@@ -25,7 +25,7 @@ export const mailSender = async (email, title, body) => {
     // console.log(transporter);
 
     let info = await transporter.sendMail({
-      from: `"GP-Asmara" <${process.env.MAIL_USER}>`, // Use the user from environment variable
+      from: `"Factrix" <${process.env.MAIL_USER}>`, // Use the user from environment variable
       to: email,
       subject: title,
       text: "Your email client does not support HTML. Please enable HTML view.",

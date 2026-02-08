@@ -350,7 +350,7 @@ export const forgotPassword = async (req, res) => {
     await OTP.create({ emailId, otp });
 
     const emailBody = otpTemplate(otp);
-    await mailSender(emailId, "Password Reset Code - GP-Asmara", emailBody);
+    await mailSender(emailId, "Password Reset Code - Factrix", emailBody);
 
     res.status(200).json({
       success: true,

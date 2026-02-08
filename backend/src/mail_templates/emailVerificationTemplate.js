@@ -67,10 +67,10 @@ export const otpTemplate = (otp) => {
 	<body>
 		<div class="container">
 			
-			<div class="message">OTP Verification Email from GP-Asmara</div>
+			<div class="message">OTP Verification Email from Factrix</div>
 			<div class="body">
 				<p>Hey there,</p>
-				<p>Welcome to GP-Asmara! We're excited to have you on board. To get started with your account, please verify your identity with the OTP (One-Time Password) below:</p>
+				<p>Welcome to Factrix! We're excited to have you on board. To get started with your account, please verify your identity with the OTP (One-Time Password) below:</p>
 				<h2 class="highlight">${otp}</h2>
 				<p>This OTP is valid for the next 5 minutes. If you didn’t request this, you can safely ignore this email.</p>
 			</div>

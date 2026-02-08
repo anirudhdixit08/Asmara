@@ -1,5 +1,5 @@
 export const registrationTemplate = (name, role) => {
-  // Logic for GP-Asmara roles
+  // Logic for Factrix roles
   const isAsmara = role === "asmara";
 
   const welcomeTitle = isAsmara
@@ -7,7 +7,7 @@ export const registrationTemplate = (name, role) => {
     : "Factory Profile Registered";
 
   const welcomeMessage = isAsmara
-    ? "Your <strong>Merchant Account</strong> for GP-Asmara is now active. You can start managing orders, tracking shipments, and collaborating with factories."
+    ? "Your <strong>Merchant Account</strong> for Factrix is now active. You can start managing orders, tracking shipments, and collaborating with factories."
     : "Your <strong>Factory Profile</strong> has been successfully registered. You can now receive orders, update production status, and manage your capacity on the portal.";
 
   return `
@@ -77,11 +77,11 @@ export const registrationTemplate = (name, role) => {
       <body>
           <div class="container">
               <div class="header">
-                  <h1>GP-Asmara Portal</h1>
+                  <h1>Factrix Portal</h1>
               </div>
               <div class="content">
                   <p>Dear ${name},</p>
-                  <p>Welcome to the <strong>GP-Asmara Merchant-Factory Network</strong>.</p>
+                  <p>Welcome to the <strong>Factrix Merchant-Factory Network</strong>.</p>
                   <p>${welcomeMessage}</p>
                   
                   <div style="text-align: center; margin-top: 30px;">
@@ -92,10 +92,10 @@ export const registrationTemplate = (name, role) => {
 
                   <p style="margin-top: 40px;">We look forward to a productive partnership.</p>
                   <p>Best Regards,<br>
-                  <span class="highlight">The GP-Asmara Team</span></p>
+                  <span class="highlight">The Factrix Team</span></p>
               </div>
               <div class="footer">
-                  <p>&copy; ${new Date().getFullYear()} GP-Asmara Supply Chain. All rights reserved.</p>
+                  <p>&copy; ${new Date().getFullYear()} Factrix Supply Chain. All rights reserved.</p>
                   <p>This is an automated message, please do not reply to this email.</p>
               </div>
           </div>
