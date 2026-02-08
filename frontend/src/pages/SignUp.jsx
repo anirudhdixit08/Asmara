@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { setUserAndChecked } from "../store/features/authSlice.js";
 import { sendOTP, register } from "../lib/api.js";
 import { PasswordInput } from "../components/PasswordInput.jsx";
 
@@ -8,6 +10,7 @@ const PASSWORD_HINT =
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [step, setStep] = useState("form"); // "form" | "otp"
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -55,7 +58,7 @@ export default function SignUp() {
     }
     setLoading(true);
     try {
-      await register({
+      const data = await register({
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         emailId: form.emailId.trim().toLowerCase(),
@@ -65,6 +68,7 @@ export default function SignUp() {
         phoneNumber: form.phoneNumber.trim() || undefined,
         otp: otp.trim(),
       });
+      if (data?.user) dispatch(setUserAndChecked(data.user));
       navigate("/", { replace: true });
     } catch (err) {
       setError(err.message || "Registration failed");

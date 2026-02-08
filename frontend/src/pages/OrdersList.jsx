@@ -37,7 +37,6 @@ export default function OrdersList() {
     setSearch(searchInput.trim());
   };
 
-  const dashboardPath = user?.role === "asmara" ? "/asmara" : "/factory";
   const isAsmara = user?.role === "asmara";
   const loading = authLoading || ordersLoading;
 
@@ -51,7 +50,7 @@ export default function OrdersList() {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
-      <AppNav backTo={dashboardPath} backLabel="Dashboard">
+      <AppNav backTo="/" backLabel="Dashboard">
         {isAsmara && (
           <Link to="/orders/create" className="btn btn-sm bg-base-100 text-primary hover:bg-base-200 border-0">
             Create order

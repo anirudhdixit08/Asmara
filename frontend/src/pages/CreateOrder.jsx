@@ -65,7 +65,7 @@ export default function CreateOrder() {
       fd.append("factoryOrganisationName", factoryOrganisationName.trim());
       fd.append("techpack", techpackFile);
       const { data } = await axiosClient.post("/order/create", fd);
-      if (data?.success) navigate("/asmara", { replace: true });
+      if (data?.success) navigate("/", { replace: true });
       else setError(data?.message || "Failed to create order.");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to create order.");
@@ -77,7 +77,7 @@ export default function CreateOrder() {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
-      <AppNav backTo="/asmara" backLabel="Back to dashboard" />
+      <AppNav backTo="/" backLabel="Back to dashboard" />
 
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6">
         <div className="bg-base-100 rounded-lg border border-base-300 shadow-sm overflow-hidden p-6 sm:p-8 text-base-content">

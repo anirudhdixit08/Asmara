@@ -17,10 +17,7 @@ export default function Login() {
     if (!emailId.trim() || !password) return;
     const result = await dispatch(login({ emailId: emailId.trim().toLowerCase(), password }));
     if (login.fulfilled.match(result)) {
-      const user = result.payload;
-      if (user?.role === "asmara") navigate("/asmara", { replace: true });
-      else if (user?.role === "factory") navigate("/factory", { replace: true });
-      else navigate("/", { replace: true });
+      navigate("/", { replace: true });
     }
   };
 
